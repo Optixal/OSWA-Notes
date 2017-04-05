@@ -5,15 +5,17 @@
 2. RF Spectrum: Pg 23 - 45
 3. Wireless Protocols, Equipment & Security: Pg 49 - 131
 
-## 1. Introduction: Pg 4 - 20
+## 1. Introduction
+* Chapter Pages: Pg 4 - 20
 * 5E Attacker Methodology: Pg 13 - 20
 
-## 2. RF Spectrum: Pg 23 - 45
+## 2. RF Spectrum
+* Chapter Pages: Pg 23 - 45
 * Calculating Wavelength of Frequency: Pg 24
 * RF Spectrum Analysis: Pg 39
 * SOIL: Pg 42
 ---
-### Frequencies
+### 2.4 GHz Frequency Table
 
 | Channel | Frequency | Uses
 |:-------:| ---------:| -----------------------
@@ -36,9 +38,11 @@
 * Asia & Europe: Channels 1 - 13
 * Japan: Channels 1 - 14
 
-## 3. Wireless Protocols, Equipment & Security: Pg 49 - 131
+## 3. Wireless Protocols, Equipment & Security
+* Chapter Pages: Pg 49 - 131
 * Bluetooth: Pg 51 - 59
 * RFID: Pg 60 - 88
   * RFID Architecture - Tag Characteristics Summary Table: Pg 74
   * RFID Security - Info Mod & Item Theft Example: Pg 80 - 85
+* 802.11: Pg 89 - 
 
