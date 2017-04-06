@@ -219,7 +219,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 ##### Wireshark Filters
 * To find beacon frames, filter by `wlan.fc.type_subtype == 0x08`.
 * To find management frames, filter by `wlan.fc.type == 0x00`.
-* To find control frames, filter by `wlan.fc.type==0x01`.
+* To find control frames, filter by `wlan.fc.type == 0x01`.
 * To find data frames, filter by `wlan.fc.type == 0x02`.
 * To find ToDS frames, filter by `wlan.fc.tods == 1`.
 * To find FromDS frames, filter by `wlan.fc.fromds == 1`.
