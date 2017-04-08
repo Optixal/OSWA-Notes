@@ -1,4 +1,4 @@
-# OSWA Notes by Optixal
+# OSWA God-Tier Notes by Optixal
 
 ## Contents
 1. Introduction: Pg 4 - 20
