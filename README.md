@@ -96,6 +96,8 @@
 1. Introduction: Pg 4 - 20
 2. RF Spectrum: Pg 23 - 45
 3. Wireless Protocols, Equipment & Security: Pg 49 - 131
+4. Wireless Security Testing - Infrastructure: Pg 134 - Pg 177
+5. 
 
 ## 1. Introduction
 * Chapter Pages: Pg 4 - 20
@@ -235,7 +237,7 @@ When doing wireless auditing, the chipset is important. Brand doesn’t matter. 
 * Realtek Chipsets - "rtl"
 * Atheros Chipsets - "ar"
 
-#### Find Out Supported Parameters for `iwpriv`
+#### Find Out Supported Parameters for iwpriv
 `iwpriv [interface]`
 
 #### Setting Frequency Band of Wireless NIC
@@ -352,6 +354,8 @@ Visit http://linux-wless.passys.nl to check native Linux support for wireless ch
 * Check beacon frame or data frame:
   * "Protected Bit" in "Frame Control" - 0: No Encryption, 1: Encrypted
   * "Privacy Bit" in "Capbility Information" - 0: No WEP, 1: Supports WEP
+* Check authentication frame:
+  * "Authentication Algorithm" in "Fixed Parameters" - 0: Open System, 1: Shared Key
 
 Alternatively, use airodump-ng and check "ENC" and "CIPHER" columns (more detailed) or Kismet's "W" column (less detailed).
 
@@ -383,6 +387,8 @@ Alternatively, use Wireshark's "WLAN Traffic Statistics" to view resolved SSIDs 
 * Select frame
 * Navigate to "IEEE 802.11 wireless LAN management frame" > "Tagged Parameters"
 * The supported bandwidth rates should be displayed in "Supported Rates"
+
+Alternatively, `iwlist scan` will also show the supported bandwidth rates.
 
 ###### Decrypt Encrypted Packets On-The-Fly
 1. Edit > Preferences > Protocols > IEEE 802.11
@@ -611,10 +617,16 @@ Kismet will automatically capture packets into a PCAP file (only if started from
 
 ##### Cracking WPA PSK
 
-* Crack with dictionary  
+* Get a dictionary file.  
+  * Download a reliable one (not available in actual exam) like rockyou.
+  * Use cowpatty's default dictionary "dict" in the directory cowpatty is in.
+  * Find a dictionary on your local computer.  
+  `grep -r "^internet$" /`
+
+* Crack with dictionary.  
 `aircrack-ng -a 2 -e [Name of AP] -b [MAC of AP] -w [dictionary] [4-way handshake PCAP]` (seems fast and reliable)  
-`cowpatty -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]`  
-`cowpatty -2 -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]` (uses first 2 EAPOL packets)
+`./cowpatty -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]`  
+`./cowpatty -2 -f [dictionary] -r [4-way handshake PCAP] -s [Name of AP]` (uses first 2 EAPOL packets)
 
 #### DoS
 
@@ -625,9 +637,9 @@ Kismet will automatically capture packets into a PCAP file (only if started from
 
 ##### MDK3 DoS
 
-`mdk3 [interface] d` (deauth everyone, slow when there are many connections)  
-`mdk3 [interface] d -b [blacklist w/ AP MACs] -c [channel]` (deauth networks listed in blacklist)  
-`mdk3 [interface] a -i [MAC of AP]` (authentication dos a certain AP)
+`mdk3 [interface] a -i [MAC of AP]` (auth flood an AP)
+`mdk3 [interface] d` (deauth all clients, slow when there are many connections)  
+`mdk3 [interface] d -b [blacklist w/ AP MACs] -c [channel]` (deauth clients part of the networks listed in blacklist)  
 
 #### Probemapper
 
@@ -635,10 +647,13 @@ Kismet will automatically capture packets into a PCAP file (only if started from
 `probemapper`
 
 * Mass client profile, find a certain target and record the MAC.
-`probemapper -i [interface] -d [driver name] -s -c 1`
+`probemapper -i [interface] -d [driver name] -s`
 
-* Target that client  
+* Target that client for profiling  
 `probemapper -i [interface] -d [driver name] -s -t [MAC of target]`
+
+* Target that client and act as an AP (requires master mode)  
+`probemapper -i [interface] -d [driver name] -t [MAC of target]`
 
 ## Resources
 
