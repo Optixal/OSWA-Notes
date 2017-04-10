@@ -79,13 +79,13 @@
 
 ## Book Contents
 
-- 1. Why Audit Wireless Networks: Pg 4 - 20
+- Why Audit Wireless Networks: Pg 4 - 20
   * Business Requirement For Wireless Auditing: Pg 4
     + CIA: Pg 9
   * Laws and Jurisdictions: Pg 10
     + Legal and Best-Practice Compliance: Pg 11
   * 5E Attacker Methodology: Pg 14
-- 2. RF Spectrum: Pg 23 - 45
+- RF Spectrum: Pg 23 - 45
   * Concept of RF: Pg 23
   * Calculating Wavelength of a Given Frequency: Pg 24
   * Diffraction: Pg 25
@@ -97,7 +97,7 @@
   * Interference: Pg 34
   * RF Spectrum Analysis: Pg 37
   * Wireless Footprint - SOIL: Pg 42
-- 3. Wireless Protocols, Equipment & Security: Pg 49 - 131
+- Wireless Protocols, Equipment & Security: Pg 49 - 131
   * The 3 Wireless Networking Specifications: Pg 49
   * Bluetooth: Pg 51
     + Bluetooth Technical Specs: Pg 52
@@ -148,7 +148,7 @@
       - Locking Down Your Audit Station: Pg 129
       - Tool Selection: Pg 130
       - The OSWA Assistant: Pg 131
-- 4. Wireless Security Testing - Infrastructure: Pg 134 - Pg 177
+- Wireless Security Testing - Infrastructure: Pg 134 - Pg 177
   * Wireless Sniffing: Pg 134
   * 802.11 Encryption and Authentication Types: Pg 137
   * WEP: Pg 138
@@ -173,14 +173,14 @@
       - Other WPA/WPA2 Considerations: Pg 173
   * 802.11-Based Denial-of-Service 
     + 802.11w Management Frame Protection 
-- 5. Wireless Security Testing - Client: Pg 181 - 196
+- Wireless Security Testing - Client: Pg 181 - 196
   * Auditing Wireless Clients: Pg 181
   * Client Probing: Pg 182
   * Discovering Wireless Clients: Pg 185
     + Using Probemapper: Pg 187
     + WCCD Vulnerability: Pg 192
   * Defending Against Client-Side Attacks: Pg 196
-- 6. Testing With A Twist: Pg 198 - 264
+- Testing With A Twist: Pg 198 - 264
   * Ph00ling: Pg 200
     + Why is Ph00ling Possible: Pg 201
     + Ph00ling Technique: Pg 202
@@ -193,8 +193,8 @@
       - Cantenna Benchmark Performance Testing: Pg 239
       - Cantenna Range Performance Testing: Pg 239
     + WNIC Antenna Jacks: Pg 249
-- 7. MoocherHunting: Pg 267 - 274
-- 8. Concluding The Audit: Pg 277 - 280
+- MoocherHunting: Pg 267 - 274
+- Concluding The Audit: Pg 277 - 280
   * Unexpected Results: Pg 277
   * Reporting Format and Procedure: Pg 279
   * Practical Recommendations: Pg 280
