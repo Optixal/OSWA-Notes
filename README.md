@@ -1,8 +1,9 @@
 # OSWA God-Tier Notes by Optixal
 
 ## Table of Contents
+
 - [Book Contents](#book-contents)
-- [1. Introduction](#1-introduction)
+- [1. Why Audit Wireless Networks](#1-why-audit-wireless-networks)
   * [5E Attacker Methodology](#5e-attacker-methodology)
     + [1. Exploration](#1-exploration)
     + [2. Enumeration](#2-enumeration)
@@ -11,31 +12,15 @@
     + [5. Egress](#5-egress)
 - [2. RF Spectrum](#2-rf-spectrum)
   * [Concepts](#concepts)
-    + [Isotrophic Radiator](#isotrophic-radiator)
-    + [Gain](#gain)
-    + [Transmission Range and Reception Range](#transmission-range-and-reception-range)
-    + [RF Spectrum Analysis](#rf-spectrum-analysis)
-    + [Sphere of Influence Limit (SOIL)](#sphere-of-influence-limit--soil-)
   * [2.4 GHz Frequency Table](#24-ghz-frequency-table)
 - [3. Wireless Protocols, Equipment & Security](#3-wireless-protocols--equipment---security)
   * [Concepts](#concepts-1)
-    + [Basic Service Set (BSS)](#basic-service-set--bss-)
-    + [Independent Basic Service Set (IBSS)](#independent-basic-service-set--ibss-)
-    + [Infrastructure Mode](#infrastructure-mode)
-    + [Distribution System (DS)](#distribution-system--ds-)
-    + [Basic Service Set ID (BSSID)](#basic-service-set-id--bssid-)
-    + [Extended Service Set](#extended-service-set)
-    + [Extended Service Set ID (ESSID) or SSID](#extended-service-set-id--essid--or-ssid)
-    + [Association/Disassociation](#association-disassociation)
-    + [Roaming](#roaming)
-    + [SSID broadcasting](#ssid-broadcasting)
-    + [Wireless NICs and Chipsets](#wireless-nics-and-chipsets)
   * [Commands for Setting Up Wifi Adapter](#commands-for-setting-up-wifi-adapter)
     + [Command to Find Out Wireless Chipset Info](#command-to-find-out-wireless-chipset-info)
     + [Chipset Prefixes](#chipset-prefixes)
-    + [Find Out Supported Parameters for `iwpriv`](#find-out-supported-parameters-for--iwpriv-)
+    + [Find Out Supported Parameters for iwpriv](#find-out-supported-parameters-for-iwpriv)
     + [Setting Frequency Band of Wireless NIC](#setting-frequency-band-of-wireless-nic)
-    + [Modes](#modes)
+    + [WiFi Modes](#wifi-modes)
     + [Commands For Changing Band and Mode on Non-Atheros Chipsets:](#commands-for-changing-band-and-mode-on-non-atheros-chipsets-)
     + [Commands For Changing Band and Mode on Atheros Chipsets:](#commands-for-changing-band-and-mode-on-atheros-chipsets-)
     + [Frame Injection](#frame-injection)
@@ -93,13 +78,128 @@
 - [Resources](#resources)
 
 ## Book Contents
-1. Introduction: Pg 4 - 20
-2. RF Spectrum: Pg 23 - 45
-3. Wireless Protocols, Equipment & Security: Pg 49 - 131
-4. Wireless Security Testing - Infrastructure: Pg 134 - Pg 177
-5. 
 
-## 1. Introduction
+- 1. Why Audit Wireless Networks: Pg 4 - 20
+  * Business Requirement For Wireless Auditing: Pg 4
+    + CIA: Pg 9
+  * Laws and Jurisdictions: Pg 10
+    + Legal and Best-Practice Compliance: Pg 11
+  * 5E Attacker Methodology: Pg 14
+- 2. RF Spectrum: Pg 23 - 45
+  * Concept of RF: Pg 23
+  * Calculating Wavelength of a Given Frequency: Pg 24
+  * Diffraction: Pg 25
+  * Concept of Gain: Pg 26
+  * Power and Distance: Pg 28
+    + Sensitivity of Signal Strength 
+  * Attenuation: Pg 30
+    + Medium Attenuation and Free-Space Loss Formula: Pg 32
+  * Interference: Pg 34
+  * RF Spectrum Analysis: Pg 37
+  * Wireless Footprint - SOIL: Pg 42
+- 3. Wireless Protocols, Equipment & Security: Pg 49 - 131
+  * The 3 Wireless Networking Specifications: Pg 49
+  * Bluetooth: Pg 51
+    + Bluetooth Technical Specs: Pg 52
+    + Bluetooth Pros and Cons: Pg 53
+    + Bluetooth Weaknesses: Pg 54
+    + Bluetooth Attack List: Pg 55
+    + Bluetooth's Threat to Companies and Individuals: Pg 57
+    + Bluetooth Defences and Mitigation Strategies: Pg 59
+  * RFID: Pg 60
+    + RFID Frequencies: Pg 61
+    + RFID History: Pg 62
+    + RFID Privacy Issues: Pg 64
+    + RFID as a Security Risk: Pg 70
+    + RFID Architecture: Pg 71
+    + RFID Architecture - Tags: Pg 72
+      - Tag Maximum Read Range Dependencies: Pg 73
+      - Tag Characteristics Summary: Pg 64
+    + RFID Use Categories: Pg 76
+    + RFID Security: Pg 77
+      - Whose Security: Pg 77
+      - Legislation: Pg 78
+      - Information Theft and Enumeration: Pg 79
+      - Information Modification and Item Theft Example: Pg 80
+      - RFID Defences and Mitigation Strategies: Pg 87
+  * 802.11: Pg 89
+    + 802.11 Alphabets: Pg 89
+    + 802.11 Types, Frequencies, Bandwidth, Range: Pg 90
+    + 802.11 Terminology: Pg 91
+    + 802.11 Wireless Infrastructure Equipment: Pg 99
+    + 802.11 Wireless Clients and Chipsets: Pg 102
+    + 802.11 Master Mode and Monitor Mode: Pg 108
+    + Selecting Wireless Chipsets: Pg 111
+      - Support for Frame Injection: Pg 112
+      - Resources for Chipset Information: Pg 113
+    + Wireless Stacks - IEEE80211 vs MAC80211: Pg 114
+    + Wireless USB Devices Issue: Pg 115
+    + Ndiswrapper and Linuxant Driverloader 
+    + Wireless Accessories: Pg 117
+      - External Antennae: Pg 117
+      - WIfi Detectors: Pg 119
+    + Wireless Frame Architecture and Analysis: Pg 121
+      - Similarity to Ethernet: Pg 121
+      - 802.11 Frame Layout and Frame Control Header: Pg 122
+      - The 3 Frame Control Header Types and Sub-Types: Pg 123
+      - Basic Association Process: Pg 125
+      - 802.11 Frame Control Header with Address Fields 
+    + Wireless Audit Prep: Pg 129
+      - Locking Down Your Audit Station: Pg 129
+      - Tool Selection: Pg 130
+      - The OSWA Assistant: Pg 131
+- 4. Wireless Security Testing - Infrastructure: Pg 134 - Pg 177
+  * Wireless Sniffing: Pg 134
+  * 802.11 Encryption and Authentication Types: Pg 137
+  * WEP: Pg 138
+    + WEP Shared Authentication Association Process: Pg 138
+    + WEP Analysis: Pg 139
+    + Defending Against WEP Attacks: Pg 144
+  * WPA: Pg 145
+    + WPA-PSK/WPA2-PSK Analysis: Pg 146
+      - Passphrase to Pairwise Master Key 
+    + WPA 4-Way Handshake: Pg 149
+      - WPA-PSK/WPA2-PSK Dynamic Key Exchange: Pg 150
+    + WPA-PSK/WPA2-PSK Seed Value Problem: Pg 152
+    + Defending Against WPA-PSK/WPA2-PSK Attacks 
+    + WPA/WPA2 Enterprise or WPA-RSN 
+      - WPA/WPA2 Dynamic Key Exchange: Pg 158
+      - WPA Enterprise Limitations: Pg 159
+      - WPA Enterprise Authentication Schema 
+        * Component Requirements for Client and Server: Pg 163
+        * LEAP: Pg 166
+        * Compatibility with Linux-Based Devices: Pg 167
+      - Defending Against WPA/WPA2 Attacks 
+      - Other WPA/WPA2 Considerations: Pg 173
+  * 802.11-Based Denial-of-Service 
+    + 802.11w Management Frame Protection 
+- 5. Wireless Security Testing - Client: Pg 181 - 196
+  * Auditing Wireless Clients: Pg 181
+  * Client Probing: Pg 182
+  * Discovering Wireless Clients: Pg 185
+    + Using Probemapper: Pg 187
+    + WCCD Vulnerability: Pg 192
+  * Defending Against Client-Side Attacks: Pg 196
+- 6. Testing With A Twist: Pg 198 - 264
+  * Ph00ling: Pg 200
+    + Why is Ph00ling Possible: Pg 201
+    + Ph00ling Technique: Pg 202
+    + Defeding Against Ph00ling Attacks: Pg 211
+  * Long Range Auditing: Pg 213
+    + Cantennas: Pg 217
+      - Cantenna Components: Pg 219
+      - Cantenna Assemble: Pg 221
+      - Cantenna Optimization: Pg 236
+      - Cantenna Benchmark Performance Testing: Pg 239
+      - Cantenna Range Performance Testing: Pg 239
+    + WNIC Antenna Jacks: Pg 249
+- 7. MoocherHunting: Pg 267 - 274
+- 8. Concluding The Audit: Pg 277 - 280
+  * Unexpected Results: Pg 277
+  * Reporting Format and Procedure: Pg 279
+  * Practical Recommendations: Pg 280
+
+## 1. Why Audit Wireless Networks
 * Chapter Pages: Pg 4 - 20
 * 5E Attacker Methodology: Pg 13 - 20
 ---
@@ -132,27 +232,31 @@ Pull out of system – clean up evidence that attacker has been there
 ---
 ### Concepts
 
-#### Isotrophic Radiator
+* Isotrophic Radiator  
 Hypothetical antenna that radiates equally in all directions (perfect sphere)
 
-#### Gain
+* Gain  
 How much signal favoured in a certain direction. The greater the gain, the more compressed into a donut shape it is. So a high gain of 14dBi pumps out a signal further than a 4dBi antenna but has a narrower beamwidth, so more accuracy is required in positioning it.
+  * 3dB rule (more accurate calculation found in "Power and Distance"): double power, gain 3dB; halve power, lose 3dB.
+  * dBm - Decibels relative to milliwatts
+  * dBi - Decibels relative to isotrophic
+  * The higher the gain, the longer and flatter the signal pattern is (compression into a "donut" shape)
+  * The lower the gain, the more sensitive it is to electromagnetic energy of that strength (improve sensitivity by setting dBm to as low a negative value as possible eg. -100dBm, but bear in mind the noise floor)
 
-#### Transmission Range and Reception Range
+* Transmission Range and Reception Range  
 Impacted by antenna design (gain and reception sensitivity), IC processing algorithm (how efficient is it in interpreting a signal at a given strngth in a sea of noise), transmission power, attenuation (design, free-space/enclosed path loss, environmental), etc.
 
-#### RF Spectrum Analysis
+* RF Spectrum Analysis  
 A spectrum analyzer graphically plots peak RF energy points for each frequency or band being measured:
-* Red – Strong
+* Red - Strong
 * Yellow
 * Light Blue
-* Dark Blue – Weak
+* Dark Blue - Weak
 
-#### Sphere of Influence Limit (SOIL)
-* Maximum SOIL (MAX-SOIL)
-* Signal Reacquisition SOIL (SR-SOIL)
-
-Once you get dropped (beyond MAX-SOIL range), you will have to get much closer to the AP before you can get a successful association (SR-SOIL)
+* Sphere of Influence Limit (SOIL)
+  * Maximum SOIL (MAX-SOIL)
+  * Signal Reacquisition SOIL (SR-SOIL)
+  * Once you get dropped (beyond MAX-SOIL range), you will have to get much closer to the AP before you can get a successful association (SR-SOIL)
 
 ### 2.4 GHz Frequency Table
 
@@ -192,36 +296,36 @@ Channels 1 - 14
 ---
 ### Concepts
 
-#### Basic Service Set (BSS)
+* Basic Service Set (BSS)  
 A group of 802.11 clients form a **Basic Service Set** (BSS).
 
-#### Independent Basic Service Set (IBSS)
+* Independent Basic Service Set (IBSS)  
 A network in ad hoc mode with wireless clients without an Access Point.
 
-#### Infrastructure Mode
+* Infrastructure Mode  
 Wiresless clients talk to Access Point and not directly to each other.
 
-#### Distribution System (DS)
+* Distribution System (DS)  
 The means by which Access Points talk to other Access Points to exchange frames for wireless clients in their respective BSSs, forward frames to follow wireless clients as they move from one BSS to another, and exchange frames with a wired network.
 
-#### Basic Service Set ID (BSSID)
+* Basic Service Set ID (BSSID)  
 MAC address of Access Point radio component. Some Access Points use different MAC addresses for their radio component and the wired Ethernet port. (The MAC addresses are likely to be sequential).
 
-#### Extended Service Set
+* Extended Service Set  
 A set of infrastructure BSSes whose APs communicate among themselves.
 
-#### Extended Service Set ID (ESSID) or SSID
+* Extended Service Set ID (ESSID) or SSID  
 
-#### Association/Disassociation
+* Association/Disassociation  
 Connecting and disconnecting from an AP as the client enters and leaves its RF sphere of influence.
 
-#### Roaming
+* Roaming  
 Act of disassociating from one AP and associating with another AP within the same Extended Service Set.
 
-#### SSID broadcasting
+* SSID broadcasting  
 AP shows its SSID in frame beacons.
 
-#### Wireless NICs and Chipsets
+* Wireless NICs and Chipsets  
 When doing wireless auditing, the chipset is important. Brand doesn’t matter. Need a chipset that is supported natively under Linux.
 
 ### Commands for Setting Up Wifi Adapter
@@ -247,7 +351,7 @@ When doing wireless auditing, the chipset is important. Brand doesn’t matter. 
 * Mode 2 is for 802.11b
 * Mode 1 is for 802.11a
 
-#### Modes
+#### WiFi Modes
 `iwconfig [interface]`
 
 * Ad-Hoc Mode
